@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jason Gil • Portfolio</title>
+<meta name="description" content="Portfolio of Jason Gil — Network Engineer & Multi Media Artist.">
+<style>
+  :root{
+    --bg:#0b0c10;
+    --surface:#0f1016;
+    --ink:#eef1f7;
+    --muted:#a7aab6;
+    --accent:#7c5cff;
+    --accent-2:#25e6d9;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --navH:52px;
+    --tabsH:44px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Inter, Roboto, Arial;
+    background: var(--bg); color: var(--ink); line-height:1.6; scroll-behavior:smooth; overflow-x:hidden;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1180px; padding:0 20px; margin:0 auto}
+
+  /* Global nav */
+  header.global{
+    position:sticky; top:0; z-index:60;
+    backdrop-filter:saturate(160%) blur(12px);
+    background: color-mix(in oklab, var(--bg) 75%, transparent);
+    border-bottom:1px solid color-mix(in oklab, var(--ink) 6%, transparent);
+  }
+  .gbar{display:flex; align-items:center; justify-content:space-between; padding:12px 0; height:var(--navH)}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; white-space:nowrap}
+  .badge{width:26px;height:26px;border-radius:8px;background:conic-gradient(from 200deg,var(--accent),var(--accent-2),var(--accent));
+    box-shadow:0 0 0 3px color-mix(in oklab, var(--ink) 6%, transparent), 0 6px 18px rgba(0,0,0,.35)}
+  .gbar nav ul{display:flex; gap:16px; list-style:none; margin:0; padding:0}
+  .gbar nav a{color:var(--muted)} .gbar nav a:focus,.gbar nav a:hover{color:var(--ink)}
+
+  /* Sticky local nav (section tabs) */
+  .localnav{
+    position:sticky; top:var(--navH); z-index:55; background:rgba(10,11,15,.6); backdrop-filter:blur(10px);
+    border-bottom:1px solid color-mix(in oklab, var(--ink) 6%, transparent); height:var(--tabsH);
+  }
+  .tabs{display:flex; gap:22px; padding:8px 0; overflow:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory}
+  .tabs a{color:var(--muted); white-space:nowrap; font-weight:600; padding:8px 0; border-bottom:2px solid transparent; flex:0 0 auto; scroll-snap-align:center}
+  .tabs a.active{color:var(--ink); border-color:var(--ink)}
+
+  /* Hero */
+  .hero{padding:72px 0 40px; text-align:center}
+  .eyebrow{letter-spacing:.25em; text-transform:uppercase; color:var(--accent-2); font-weight:800; font-size:.78rem}
+  .headline{font-size:clamp(2.1rem,6vw,4.6rem); line-height:1.05; margin:.3rem auto .8rem; max-width:20ch; font-weight:900}
+  .sub{color:var(--muted); max-width:64ch; margin:0 auto}
+  .cta{margin-top:18px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .btn{display:inline-block; padding:.9rem 1.2rem; border-radius:14px; border:1px solid color-mix(in oklab, var(--ink) 8%, transparent);
+    background:linear-gradient(180deg, color-mix(in oklab, var(--surface) 92%, var(--ink) 2%), var(--surface));
+    font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04)}
+  .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 38%, var(--surface)), var(--surface));
+    border-color:color-mix(in oklab, var(--accent) 45%, transparent)}
+
+  /* Stage sections like product panels */
+  section.stage{padding:72px 0; border-top:1px solid color-mix(in oklab, var(--ink) 6%, transparent)}
+  .stage .kicker{font-size:.9rem; color:var(--muted); text-transform:uppercase; letter-spacing:.2em; font-weight:800}
+  .stage .title{font-size:clamp(1.6rem,3.8vw,3rem); margin:.4rem 0 1rem; line-height:1.12}
+  .stage.split{display:grid; grid-template-columns: 1.1fr .9fr; gap:30px; align-items:center}
+  .panel{border-radius:18px; background:linear-gradient(180deg, color-mix(in oklab, var(--surface) 92%, var(--ink) 2%), var(--surface));
+    border:1px solid color-mix(in oklab, var(--ink) 8%, transparent); padding:18px; box-shadow: 0 10px 30px rgba(0,0,0,.35)}
+
+  /* Slider */
+  .slider{position:relative; max-width:100%; aspect-ratio:16/9; overflow:hidden;
+    border-radius:14px; border:1px solid color-mix(in oklab, var(--ink) 8%, transparent)}
+  .slides{height:100%}
+  .slides img{width:100%; height:100%; object-fit:cover; display:none}
+  .slides img.active{display:block}
+  .slider .prev, .slider .next{
+    position:absolute; top:50%; transform:translateY(-50%);
+    background:rgba(0,0,0,.45); color:#fff; border:none; padding:10px 12px; border-radius:50%;
+    cursor:pointer
+  }
+  .slider .prev{left:10px} .slider .next{right:10px}
+  .dots{position:absolute; left:0; right:0; bottom:10px; display:flex; gap:6px; justify-content:center}
+  .dot{width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.35)}
+  .dot.active{background:#fff}
+
+  /* Anchors compensate sticky headers */
+  .anchor{scroll-margin-top: calc(var(--navH) + var(--tabsH) + 16px)}
+
+  /* Mobile tweaks */
+  @media (max-width: 880px){
+    .wrap{padding:0 16px}
+    .stage.split{grid-template-columns:1fr}
+    .headline{max-width: 16ch}
+  }
+  @media (max-width: 540px){
+    :root{ --navH:48px; --tabsH:42px }
+    .gbar nav ul{gap:12px}
+    .tabs{gap:16px}
+    .headline{font-size: clamp(2rem, 8vw, 3rem)}
+    .hero{padding:56px 0 28px}
+    section.stage{padding:56px 0}
+    .btn{padding:.8rem 1.05rem; border-radius:12px}
+  }
+  @media (max-width: 380px){
+    .brand span{font-size:.95rem}
+    .tabs a{font-size:.9rem}
+  }
+  /* Reveal effects */
+  .reveal{opacity:0; transform:translateY(28px); filter:blur(2px) brightness(.95);
+    transition:opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease)}
+  .reveal.in{opacity:1; transform:none; filter:none}
+  .fx-left{transform:translateX(28px)} .fx-right{transform:translateX(-28px)} .fx-zoom{transform:scale(.94)}
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1 !important; transform:none !important; filter:none !important; transition:none !important}
+  }
+</style>
+</head>
+<body>
+  <header class="global">
+    <div class="wrap gbar">
+      <div class="brand"><div class="badge"></div> <span>Jason Gil</span></div>
+      <nav aria-label="Global">
+        <ul>
+          <li><a href="#intro">Home</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="localnav">
+      <div class="wrap">
+        <div class="tabs" role="tablist">
+          <a href="#intro" class="active">Overview</a>
+          <a href="#experience">Experience</a>
+          <a href="#skills">Skills</a>
+          <a href="#education">Education</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="intro" class="anchor">
+    <section class="hero wrap">
+      <p class="eyebrow reveal">Network Engineer & Multi Media Artist</p>
+      <h1 class="headline reveal fx-zoom">Clean, bold visuals with technical precision.</h1>
+      <p class="sub reveal">I combine network operations and systems know‑how with design craft — from brand kits to campaign visuals — to ship work that looks sharp and works smoothly.</p>
+      <div class="cta">
+        <a class="btn primary reveal" href="mailto:prostudios.com@gmail.com">Email Me</a>
+        <a class="btn reveal" href="#experience">See Experience</a>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="stage split anchor">
+      <div class="wrap" style="grid-column:1/-1;display:contents">
+        <div class="panel reveal fx-left">
+          <p class="kicker">Work Experience</p>
+          <h2 class="title">Innovative IT & Design Firm — Network Engineer → Multi Media Artist</h2>
+          <p>2023 – Present</p>
+          <p>Lead designer responsible for managing the company’s social media presence and visual content, including branded campaigns, graphics, and internal documentation layouts. Alongside creative work, also oversee critical IT operations, AWS/system administration, and training—bringing both technical precision and design impact together.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <span class="btn">Social media graphics & campaign visuals</span>
+            <span class="btn">Branding & visual consistency across platforms</span>
+            <span class="btn">IT operations and AWS/system administration</span>
+            <span class="btn">Internal training and documentation design</span>
+          </div>
+        </div>
+        <div class="reveal fx-right">
+          <div class="slider" data-autoplay="5000">
+            <div class="slides">
+                <img src="https://drive.google.com/uc?export=view&id=1z2RTSmhweVryVqb_i13kSa3a2651tHZv"
+                     alt="Campaign visual" class="active">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECampaign%20Visual%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Campaign visual 2">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ESocial%20Graphic%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Social graphic 3">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECase%20Study%20Cover%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Case study cover 4">
+            </div>
+            <button class="prev" aria-label="Previous">&#10094;</button>
+            <button class="next" aria-label="Next">&#10095;</button>
+            <div class="dots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage split anchor">
+      <div class="wrap" style="grid-column:1/-1;display:contents">
+        <div class="reveal fx-left">
+          <div class="slider" data-autoplay="5000">
+            <div class="slides">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECampaign%20Visual%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Campaign slide 1" class="active">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ESocial%20Graphic%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Campaign slide 2">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECase%20Study%20Cover%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Campaign slide 3">
+            </div>
+            <button class="prev" aria-label="Previous">&#10094;</button>
+            <button class="next" aria-label="Next">&#10095;</button>
+            <div class="dots"></div>
+          </div>
+        </div>
+        <div class="panel reveal fx-right">
+          <h2 class="title">DOC JBT The VET Explorer — Family Business</h2>
+          <p>2024 – 2025</p>
+          <p>Created and edited promotional videos for social media and marketing campaigns. Provided business analysis to track sales, monitor customer demand, and support operational improvements.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <span class="btn">Video Editing</span>
+            <span class="btn">Social Marketing</span>
+            <span class="btn">Business Analysis</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS (slider) -->
+    <section id="skills" class="stage anchor">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="kicker">Skills</p>
+          <h2 class="title">Design tools & prompt craft.</h2>
+        </div>
+        <div class="reveal">
+          <div class="slider" data-autoplay="4500">
+            <div class="slides">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3EBranding%20Visual%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Skill showcase 1" class="active">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECampaign%20Visual%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Skill showcase 2">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ESocial%20Graphic%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Skill showcase 3">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECase%20Study%20Cover%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Skill showcase 4">
+            </div>
+            <button class="prev" aria-label="Previous">&#10094;</button>
+            <button class="next" aria-label="Next">&#10095;</button>
+            <div class="dots"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+          <span class="btn">Photoshop</span>
+          <span class="btn">Illustrator</span>
+          <span class="btn">Canva</span>
+          <span class="btn">Adobe Express</span>
+          <span class="btn">GPT — Prompt</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="stage anchor">
+      <div class="wrap">
+        <div class="panel reveal">
+          <p class="kicker">Education</p>
+          <h2 class="title">International Electronics Technical Institute, Inc.</h2>
+          <p>2012 – 2016</p>
+          <p>Bachelor of Information Technology</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT (portrait slider) -->
+    <section id="about" class="stage anchor">
+      <div class="wrap">
+        <div class="split" style="display:grid;grid-template-columns:1.1fr .9fr; gap:24px; align-items:center">
+          <div class="panel reveal fx-left">
+            <p class="kicker">Who am I?</p>
+            <h2 class="title">Engineer by profession, designer by passion.</h2>
+            <p>Highly motivated and detail‑oriented, with a strong drive to combine technical expertise with creativity. Experienced in network operations, business analysis, and inspired graphic design projects that bring both function and visual impact together.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+              <span class="btn">Photography</span>
+              <span class="btn">Coffee Hopping</span>
+              <span class="btn">Traveling</span>
+              <span class="btn">Cooking</span>
+            </div>
+          </div>
+          <div class="reveal fx-right">
+            <div class="slider" data-autoplay="5500">
+              <div class="slides">
+                <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3EPortrait%20/%20Studio%20Shot%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Portrait 1" class="active">
+                <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3EBranding%20Visual%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Studio shot 2">
+              </div>
+              <button class="prev" aria-label="Previous">&#10094;</button>
+              <button class="next" aria-label="Next">&#10095;</button>
+              <div class="dots"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT (banner slider) -->
+    <section id="contact" class="stage anchor">
+      <div class="wrap split" style="display:grid;grid-template-columns:1.1fr .9fr; gap:24px">
+        <div class="panel reveal fx-left" style="text-align:center">
+          <p class="kicker">Let’s collaborate</p>
+          <h2 class="title">Email or WhatsApp</h2>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a class="btn primary" href="mailto:prostudios.com@gmail.com">Email: prostudios.com@gmail.com</a>
+            <a class="btn" href="https://wa.me/639088736703" target="_blank" rel="noopener">WhatsApp: +63 908 873 6703</a>
+          </div>
+        </div>
+        <div class="reveal fx-right">
+          <div class="slider" data-autoplay="4800">
+            <div class="slides">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3EContact%20Banner%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Contact banner 1" class="active">
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22900%22%20viewBox%3D%220%200%201600%20900%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231a1b22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%221540%22%20height%3D%22840%22%20rx%3D%2228%22%20ry%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%234b5563%22%20stroke-dasharray%3D%2214%2C10%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cg%20fill%3D%22%239aa0ad%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22442.0%22%20font-size%3D%2248%22%20font-weight%3D%22700%22%3ECase%20Study%20Cover%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22800.0%22%20y%3D%22494.0%22%20font-size%3D%2228%22%3E1600%C3%97900%20%E2%80%A2%20.jpg%20/%20.png%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E" alt="Contact banner 2">
+            </div>
+            <button class="prev" aria-label="Previous">&#10094;</button>
+            <button class="next" aria-label="Next">&#10095;</button>
+            <div class="dots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>© <span id="y">2025</span> Jason Gil. All rights reserved.</div>
+      <div style="color:var(--muted)">Email • WhatsApp</div>
+    </div>
+  </footer>
+
+<script>
+  // Year
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // Reveal engine
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold: 0.18, rootMargin: "0px 0px -10% 0px"});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Sticky tab highlight
+  const tabs = document.querySelectorAll('.tabs a');
+  const anchors = [...tabs].map(a => document.querySelector(a.getAttribute('href')));
+  const so = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href').slice(1) === entry.target.id));
+      }
+    });
+  }, {rootMargin: "-40% 0px -55% 0px", threshold: 0});
+  anchors.forEach(sec => sec && so.observe(sec));
+
+  // ===== Reusable Slider Engine (per-instance state) =====
+  document.querySelectorAll('.slider').forEach((slider) => {
+    const slides = slider.querySelectorAll('.slides img');
+    const prev = slider.querySelector('.prev');
+    const next = slider.querySelector('.next');
+    const dotsWrap = slider.querySelector('.dots');
+    let i = 0;
+    let timer = null;
+    const autoplayMs = parseInt(slider.dataset.autoplay || '0', 10);
+
+    // Dots
+    slides.forEach((_, idx) => {
+      const d = document.createElement('span');
+      d.className = 'dot' + (idx===0 ? ' active' : '');
+      d.addEventListener('click', () => show(idx));
+      dotsWrap.appendChild(d);
+    });
+    const dots = dotsWrap.querySelectorAll('.dot');
+
+    function show(n){
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+      resetAutoplay();
+    }
+
+    function plus(delta){ show(i + delta); }
+
+    function resetAutoplay(){
+      if(!autoplayMs) return;
+      if(timer) clearInterval(timer);
+      timer = setInterval(() => show(i + 1), autoplayMs);
+    }
+
+    // Events
+    prev.addEventListener('click', () => plus(-1));
+    next.addEventListener('click', () => plus(1));
+
+    // Swipe (mobile)
+    let sx = null;
+    slider.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, {passive:true});
+    slider.addEventListener('touchmove', (e) => {
+      if(sx === null) return;
+      const dx = e.touches[0].clientX - sx;
+      if(Math.abs(dx) > 44) { plus(dx > 0 ? -1 : 1); sx = null; }
+    }, {passive:true});
+    slider.addEventListener('touchend', () => { sx = null; });
+
+    // Init
+    show(0);
+    resetAutoplay();
+  });
+</script>
+</body>
+</html>
